@@ -17,6 +17,16 @@ jobs:
             flaky: true
 
     steps:
+    - name: Build tools
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install visualstudio2019-workload-nodebuildtools
+        choco install visualstudio2019-workload-vctools
+        choco install vcredist140
+        choco install visualstudio2019buildtools
+    - name: Add msbuild to PATH
+      if: matrix.os == 'windows-latest'
+      uses: microsoft/setup-msbuild@v1.0.2
     - name: Set Timezone
       uses: szenius/set-timezone@v1.0
       with:
@@ -35,7 +45,6 @@ jobs:
         CI: true
     - name: Codecov
       uses: codecov/codecov-action@v1.1.0
-
     - name: end-to-end tests
       if: matrix.os == 'macOS-latest'
       run: npm run test-e2e
